@@ -67,7 +67,7 @@ let rec solveur_split clauses interpretation =
 
 (*--------------- Unitaire --------------*)  
 (* fonction auxiliere pour - retourne le littéral d'une clause unitaire 
-      a' lis -> a' *)
+      a' list -> a' *)
 let get_litteral clause =
   match clause with
   | [] -> failwith ("Not found")
@@ -89,16 +89,15 @@ let rec unitaire clauses =
 let rec find e = function
   | [] -> false
   | h::t -> h = e || find e t
-;;
-              
-(* fonction auxiliere pour get_list_liter - returne union sans doublons des littéraux de deux listes
-        a' list -> a' list -> a' list *)
+
+  
+(*fonction auxiliere pour get_list_liter - returne union sans doublons des littéraux de deux listes
+   a' list -> a' list -> a' list *)
 let rec union_sans_doublons l1 l2 =
   match l1 with
   | [] -> l2
-  | h::t -> if find h l2 then  union_sans_doublons t l2
-      else  union_sans_doublons t (h::l2)
-;;
+  | a :: tail -> if find a l2 then  union_sans_doublons tail l2
+      else  union_sans_doublons tail (a::l2)
 
 
 (* fonction auxiliere pour pur - returne liste des literraux d'un clause 
@@ -109,12 +108,15 @@ let rec get_list_liter clauses =
   | a :: [] -> union_sans_doublons a (List.tl a)
   | a :: tail -> union_sans_doublons ( union_sans_doublons a (List.tl a)) (get_list_liter tail)
 
-(* pur : int list list -> int
-    - si `clauses' contient au moins un littéral pur, retourne
-      ce littéral ;
-    - sinon, lève une exception `Failure "pas de littéral pur"' *)
-let pur clauses = 
-  0  
+(*pur : int list list -> int
+ - si `clauses' contient au moins un littéral pur, retourne ce littéral ;
+ - sinon, lève une exception `Failure "pas de littéral pur"*) 
+let rec pur clauses =
+  let l = get_list_liter clauses in
+  match l with
+  | [] -> failwith "pas de littéral pur"
+  | a :: tail -> if List.mem (- a) l then pur (List.tl clauses) 
+      else a
      
 (*--------------- Solveur DPLL --------------*)    
 
