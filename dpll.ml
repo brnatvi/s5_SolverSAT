@@ -35,19 +35,24 @@ let coloriage = [[1;2;3];[4;5;6];[7;8;9];[10;11;12];[13;14;15];[16;17;18];[19;20
 
 (********************************************************************)
 
-(*--------------- Simplifie --------------*) 
-let rec simpl filter i clauses =
+(* simplifie : int -> int list list -> int list list 
+   applique la simplification de l'ensemble des clauses en mettant
+   le littéral i à vrai *)
+    let rec simpl filter i clauses =
   match clauses with
   | [] -> []
-  | a :: tail -> (filter_map filter a) :: (simpl filter i tail) 
+  | a :: tail -> (filter_map filter a) :: (simpl filter i tail)
+;; 
+(**)
 
 (*simplifie : int -> int list list -> int list list 
    applique la simplification de l'ensemble des clauses en mettant
    le littéral i à vrai *)
-let rec simplifie i clauses =  
+let rec simplifie i clauses =
   let f_clause arr = if (List.mem i arr) then None else Some arr in
-  let f_List k = if k = -i then None else Some k in
-  filter_map f_clause (simpl f_List i clauses)
+  let f_List k = if k = i then None else Some k in
+  filter_map f_clause (simpl f_List (-i) clauses)
+;;
 
 (* solveur_split : int list list -> int list -> int list option
    exemple d'utilisation de `simplifie' *)
@@ -129,6 +134,7 @@ let rec pur clauses =
 
 (* solveur_dpll_rec : int list list -> int list -> int list option *)
 let rec solveur_dpll_rec clauses interpretation =
+  (* à compléter *)
   None
 
 (* tests *)
