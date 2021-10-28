@@ -35,7 +35,7 @@ let coloriage = [[1;2;3];[4;5;6];[7;8;9];[10;11;12];[13;14;15];[16;17;18];[19;20
 
 (********************************************************************)
 
-(* simpl : (a' -> b' option) -> 'c -> int list list -> int list list 
+(* simpl_clauses : (a' -> b' option) -> 'c -> int list list -> int list list 
    applique la simplification à chaque clause de la CNF *)
   let rec simpl_clauses filter i clauses =
   match clauses with
@@ -91,7 +91,7 @@ let rec unitaire clauses =
 (*--------------- Pur --------------*)
   
 (* union_sans_doublons : a' list -> a' list -> a' list
-      fonction auxiliaire pour 'get_list_liter', retourne l'union sans doublons des littéraux des deux listes *)
+      fonction auxiliaire pour 'get_list_litteral', retourne l'union sans doublons des littéraux des deux listes *)
   let rec union_sans_doublons l1 l2 = 
   match l1,l2 with 
   | _,[] -> l1
@@ -101,7 +101,7 @@ let rec unitaire clauses =
       if a2 < a1 then a2::(union_sans_doublons l1 l2') else a1::(union_sans_doublons l1' l2')
 
 
-(* get_list_liter : a' list list -> a' list
+(* get_list_litteral : a' list list -> a' list
     fonction auxiliaire pour pur - retourne la liste des literraux d'une CNF *)
 let rec get_list_litteral clauses =
   match clauses with
