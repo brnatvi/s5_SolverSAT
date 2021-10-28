@@ -37,10 +37,10 @@ let coloriage = [[1;2;3];[4;5;6];[7;8;9];[10;11;12];[13;14;15];[16;17;18];[19;20
 
 (* simpl : (a' -> b' option) -> 'c -> int list list -> int list list 
    applique la simplification à chaque clause de la CNF *)
-  let rec simpl filter i clauses =
+  let rec simpl_clauses filter i clauses =
   match clauses with
   | []      -> []
-  | a::tail -> (filter_map filter a)::(simpl filter i tail) 
+  | a::tail -> (filter_map filter a)::(simpl_clauses filter i tail) 
 
 (* simplifie : int -> int list list -> int list list 
    applique la simplification de l'ensemble des clauses en mettant
@@ -48,7 +48,7 @@ let coloriage = [[1;2;3];[4;5;6];[7;8;9];[10;11;12];[13;14;15];[16;17;18];[19;20
 let rec simplifie i clauses =
   let f_clause arr = if (List.mem i arr) then None else Some arr in
   let f_List k = if k = -i then None else Some k in
-  filter_map f_clause (simpl f_List i clauses)
+  filter_map f_clause (simpl_clauses f_List i clauses)
 
 
 (* solveur_split : int list list -> int list -> int list option
@@ -102,18 +102,18 @@ let rec unitaire clauses =
 
 
 (* get_list_liter : a' list list -> a' list
-    fonction auxiliaire pour pur - retourne la liste des literraux d'une clause *)
-let rec get_list_liter clauses =
+    fonction auxiliaire pour pur - retourne la liste des literraux d'une CNF *)
+let rec get_list_litteral clauses =
   match clauses with
   | []      -> []
   | a::[]   -> union_sans_doublons a (List.tl a)
-  | a::tail -> union_sans_doublons ( union_sans_doublons a (List.tl a)) (get_list_liter tail)
+  | a::tail -> union_sans_doublons ( union_sans_doublons a (List.tl a)) (get_list_litteral tail)
 
 (* pur : int list list -> int
  - si `clauses' contient au moins un littéral pur, retourne ce littéral ;
  - sinon, lève une exception `Failure "pas de littéral pur"*) 
 let rec pur clauses =
-  let l = get_list_liter clauses in
+  let l = get_list_litteral clauses in
   match l with
   | []      -> failwith "pas de litteral pur"
   | a::tail -> if List.mem (- a) l then pur (List.tl clauses) 
